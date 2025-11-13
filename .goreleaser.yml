@@ -1,0 +1,173 @@
+project_name: habit-tracker
+
+before:
+  hooks:
+    - go mod tidy
+    - go test ./...
+
+builds:
+  - id: habit
+    binary: habit
+    main: ./cmd/habit
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - "7"
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - id: habit
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+      - CONTRIBUTING.md
+      - completions/*
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: 'New Features'
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: 'Bug Fixes'
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: 'Performance Improvements'
+      regexp: "^.*perf[(\\w)]*:+.*$"
+      order: 2
+    - title: 'Refactors'
+      regexp: "^.*refactor[(\\w)]*:+.*$"
+      order: 3
+    - title: 'Documentation'
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 4
+    - title: Other
+      order: 999
+
+release:
+  github:
+    owner: codeforgood-org
+    name: cli-habit-tracker-go
+  draft: false
+  prerelease: auto
+  mode: append
+  name_template: "v{{.Version}}"
+  footer: |
+    ## Installation
+
+    ### Using install script
+    ```bash
+    curl -sfL https://raw.githubusercontent.com/codeforgood-org/cli-habit-tracker-go/main/install.sh | sh
+    ```
+
+    ### Manual installation
+    Download the appropriate binary for your platform from the assets above.
+
+    ## What's Changed
+    See the full changelog below.
+
+# Homebrew tap (optional - requires separate tap repo)
+# brews:
+#   - name: habit
+#     tap:
+#       owner: codeforgood-org
+#       name: homebrew-tap
+#     folder: Formula
+#     homepage: https://github.com/codeforgood-org/cli-habit-tracker-go
+#     description: "A simple CLI tool for tracking daily habits and building streaks"
+#     license: MIT
+#     install: |
+#       bin.install "habit"
+#       bash_completion.install "completions/habit.bash" => "habit"
+#       zsh_completion.install "completions/habit.zsh" => "_habit"
+#       fish_completion.install "completions/habit.fish"
+
+nfpms:
+  - id: habit
+    package_name: habit-tracker
+    file_name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else }}{{ .Arch }}{{ end }}
+    vendor: Code for Good
+    homepage: https://github.com/codeforgood-org/cli-habit-tracker-go
+    maintainer: Code for Good <codeforgood@example.com>
+    description: A simple CLI tool for tracking daily habits and building streaks
+    license: MIT
+    formats:
+      - deb
+      - rpm
+      - apk
+    bindir: /usr/bin
+    contents:
+      - src: ./completions/habit.bash
+        dst: /usr/share/bash-completion/completions/habit
+        file_info:
+          mode: 0644
+      - src: ./completions/habit.zsh
+        dst: /usr/share/zsh/site-functions/_habit
+        file_info:
+          mode: 0644
+      - src: ./completions/habit.fish
+        dst: /usr/share/fish/vendor_completions.d/habit.fish
+        file_info:
+          mode: 0644
+
+dockers:
+  - image_templates:
+      - "ghcr.io/codeforgood-org/habit-tracker:{{ .Version }}-amd64"
+      - "ghcr.io/codeforgood-org/habit-tracker:latest-amd64"
+    use: buildx
+    goarch: amd64
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    dockerfile: Dockerfile
