@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "make build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "make test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Test Coverage",
+      "type": "shell",
+      "command": "make coverage",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Lint",
+      "type": "shell",
+      "command": "make lint",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$go"]
+    },
+    {
+      "label": "Format",
+      "type": "shell",
+      "command": "make fmt",
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "make clean",
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Install",
+      "type": "shell",
+      "command": "make install",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run",
+      "type": "shell",
+      "command": "./habit",
+      "args": ["${input:habitCommand}"],
+      "dependsOn": ["Build"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "habitCommand",
+      "type": "promptString",
+      "description": "Habit command to run (e.g., 'list', 'mark Exercise')",
+      "default": "help"
+    }
+  ]
+}

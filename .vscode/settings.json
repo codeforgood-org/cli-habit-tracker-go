@@ -1,0 +1,30 @@
+{
+  "go.useLanguageServer": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintOnSave": "package",
+  "go.formatTool": "goimports",
+  "go.testOnSave": false,
+  "go.coverOnSave": false,
+  "go.testFlags": ["-v"],
+  "go.buildFlags": ["-v"],
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/coverage.out": true,
+    "**/coverage.html": true,
+    "**/habit": true,
+    "**/cli-habit-tracker-go": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/*/**": true,
+    "**/vendor/**": true
+  },
+  "go.testEnvVars": {
+    "HABIT_DATA_FILE": "/tmp/test-habits.json"
+  }
+}
