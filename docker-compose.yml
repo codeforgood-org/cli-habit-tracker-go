@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  habit-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: habit-tracker
+    volumes:
+      # Mount local data directory to persist habits
+      - ./data:/root/.habit-tracker
+    environment:
+      # Configure data file location
+      - HABIT_DATA_FILE=/root/.habit-tracker/habits.json
+      # Disable color output in containers (optional)
+      # - NO_COLOR=1
+    # Override the default command to keep container running
+    # Useful for interactive usage
+    # command: tail -f /dev/null
+
+# Example usage:
+#
+# Build and start:
+#   docker-compose build
+#   docker-compose up -d
+#
+# Run commands:
+#   docker-compose exec habit-tracker habit list
+#   docker-compose exec habit-tracker habit mark "Exercise"
+#   docker-compose exec habit-tracker habit stats
+#
+# View logs:
+#   docker-compose logs -f habit-tracker
+#
+# Stop and remove:
+#   docker-compose down
+#
+# Remove data:
+#   docker-compose down -v
